@@ -1,28 +1,39 @@
-FCFileManager
+FCFileManager ![Pod version](http://img.shields.io/cocoapods/v/FCFileManager.svg) ![Pod platforms](http://img.shields.io/cocoapods/p/FCFileManager.svg) ![Pod license](http://img.shields.io/cocoapods/l/FCFileManager.svg)
 =============
 
 **iOS File Manager on top of NSFileManager for simplifying files management.** It provides many static methods for executing most common operations with few lines of code. It works by default in the Documents directory to allow use of relative paths, but it's possible to work easily on any other directory.
 
-#Features
-- Build paths relative to absolute directories *(FCFileManager works by default in the Documents directory, so you must build absolute paths only if you need to work outside of the Documents directory)*
-- Copy files/directories
-- Create files/directories
-- Check if files/directory exists
-- Get files/directories attributes
-- Get files/directories creation date
-- Get files/directories size
-- List files/directories
-- Move files/directories
-- Read files content in different formats
-- Remove files/directories
-- Rename files/directories
-- Write files content
+##Requirements
+- iOS >= 5.0
+- ARC enabled
+
+##Installation
+
+####CocoaPods:
+`pod 'FCFileManager'`
+
+####Manual install:
+Copy `FCFileManager.h` and `FCFileManager.m` to your project.
+
+##Features
+- **Build paths** relative to absolute directories *(FCFileManager works by default in the Documents directory, so you must build absolute paths only if you need to work outside of the Documents directory)*
+- **Copy** files/directories
+- **Create** files/directories
+- **Check if** files/directory **exists**
+- **Get** files/directories **attributes** *(creation date, size, ...)*
+- **List** files/directories
+- **Move** files/directories
+- **Read/Write** files content in different formats *(arrays, custom models, data, dictionaries, images, json, strings, ... )*
+- **Read/Write xattr** *(Extended File Attributes)*
+- **Read** images metadata, **EXIF** data, **TIFF** data
+- **Remove** files/directories
+- **Rename** files/directories
 - Directories are created on the fly
-- Error handling as using NSFileManager
+- **Error handling** as using NSFileManager
 
 See [FCFileManager.h](https://github.com/fabiocaccamo/FCFileManager/blob/master/FCFileManager/FCFileManager.h) for all of the methods.
 
-#Usage examples
+##Usage examples
 
 **Build path:**
 ```objc
@@ -30,6 +41,18 @@ See [FCFileManager.h](https://github.com/fabiocaccamo/FCFileManager/blob/master/
 NSString *testPath = @"test.txt";
 //my file path relative to the temporary directory path
 NSString *testPathTemp = [FCFileManager pathForTemporaryDirectoryWithPath:testPath];
+
+/*
+All shortcuts suppported:
+
+pathForApplicationSupportDirectory;
+pathForCachesDirectory;
+pathForDocumentsDirectory;
+pathForLibraryDirectory;
+pathForMainBundleDirectory;
+pathForPlistNamed:(NSString *)name; //look for {{ name }}.plist in the main bundle directory
+pathForTemporaryDirectory;
+*/
 ```
 
 **Copy file:**
@@ -43,6 +66,12 @@ NSString *testPath = [FCFileManager pathForApplicationSupportDirectoryWithPath:@
 ```objc
 //create file and write content to it (if it doesn't exist)
 [FCFileManager createFileAtPath:@"test.txt" withContent:@"File management has never been so easy!!!"];
+```
+
+**Create directories:**
+```objc
+//create directories tree for the given path (in this case in the Documents directory)
+[FCFileManager createDirectoriesForPath:@"/a/b/c/d/"];
 ```
 
 **Check if file exists:**
@@ -61,6 +90,21 @@ BOOL testFileExists = [FCFileManager existsItemAtPath:@"test.txt"];
 ```objc
 //read file from path and returns its content (NSString in this case)
 NSString *test = [FCFileManager readFileAtPath:@"test.txt"];
+```
+
+**Read/Write xattr (Extended File Attributes):**
+```objc
+//returns the string-value stored for the specified key, if the key doesn't exist returns nil
+NSString *value = [FCFileManager xattrOfItemAtPath:@"test.txt" getValueForKey:"uploaded"];
+
+//set the specified string-value and returns a BOOL result of the operation
+BOOL success = [FCFileManager xattrOfItemAtPath:@"test.txt" setValue:@"1" forKey:@"uploaded"];
+```
+
+**Read image EXIF data:**
+```objc
+//read image file from path and returns its EXIF data
+NSDictionary *exifData = [FCFileManager exifDataOfImageAtPath:@"test.jpg"];
 ```
 
 **Remove file:**
@@ -83,5 +127,46 @@ NSArray *testContent = [NSArray arrayWithObjects:@"t", @"e", @"s", @"t", nil];
 [FCFileManager writeFileAtPath:@"test.txt" content:testContent];
 ```
 
-#TODO
-- documentation
+**Get file/directory size:**
+```objc
+//get the file size in bytes
+NSNumber *fileSize = [FCFileManager sizeOfFileAtPath:@"test.txt"];
+
+//get the directory size in bytes (including all subdirectories and files inside it)
+NSNumber *directorySize = [FCFileManager sizeOfDirectoryAtPath:@"/a/"];
+```
+
+**Get file/directory size formatted:**
+```objc
+//returns a human-readable file size formatted with the necessary suffix: bytes, KB, MB, GB, TB
+NSString *fileSizeFormatted = [FCFileManager sizeFormattedOfFileAtPath:@"test.txt"];
+```
+
+##Donate
+Do you want to support me?
+
+[![Donate](https://www.paypalobjects.com/webstatic/en_US/btn/btn_donate_pp_142x27.png "Buy me a beer! - C.R.E.A.M.")](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=fabio%2ecaccamo%40gmail%2ecom&lc=IT&item_name=Fabio%20Caccamo%20%2d%20Open%20Source%20Projects&item_number=FCFileManager&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted "Buy me a beer! - C.R.E.A.M.")
+
+##License
+The MIT License (MIT)
+
+Copyright (c) 2015 Fabio Caccamo - fabio.caccamo@gmail.com
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
